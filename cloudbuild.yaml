@@ -1,25 +1,23 @@
-# cloudbuild.yaml for deploying to Kubernetes with Cloud Build and GitHub
-
 steps:
   # Step 1: Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/project-456212/hello-youtube-gke:$SHORT_SHA', '.']
-
-  # Step 2: Push Docker image to Google Container Registry
+    args: ['build', '-t', 'gcr.io/project-456212/youtube-repo:$SHORT_SHA', '.']
+  
+  # Step 2: Push Docker image to Google Container Registry (GCR)
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/project-456212/hello-youtube-gke:$SHORT_SHA']
+    args: ['push', 'gcr.io/project-456212/youtube-repo:$SHORT_SHA']
 
-  # Step 3: Get Kubernetes credentials
+  # Step 3: Get Kubernetes credentials (for deployment)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     args: ['gcloud', 'container', 'clusters', 'get-credentials', 'hello-youtube-gke-cluster', '--zone', 'us-central1-a', '--project', 'project-456212']
 
-  # Step 4: Deploy to Kubernetes using kubectl (Deployment)
+  # Step 4: Apply the deployment configuration to Kubernetes
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     args: ['kubectl', 'apply', '-f', 'deployment.yaml']
 
-  # Step 5: Expose the service using kubectl (Service)
+  # Step 5: Expose the service in Kubernetes
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     args: ['kubectl', 'apply', '-f', 'service.yaml']
 
 images:
-  - 'gcr.io/project-456212/hello-youtube-gke:$SHORT_SHA'
+  - 'gcr.io/project-456212/youtube-repo:$SHORT_SHA'
