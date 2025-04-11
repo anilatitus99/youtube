@@ -1,23 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-youtube-gke
+  name: hello-youtube
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      app: hello-youtube-gke
+      app: hello-youtube
   template:
     metadata:
       labels:
-        app: hello-youtube-gke
+        app: hello-youtube
     spec:
       containers:
-        - name: hello-youtube-gke
-          # Replace gcr.io/project-456212/hello-youtube-gke:latest with your correct image name
-          image: gcr.io/project-456212/hello-youtube-gke:latest
-          ports:
-            - containerPort: 8080
-          env:
-            - name: PORT
-              value: "8080"
+      - name: hello-youtube-container
+        image: gcr.io/project-456212/youtube-repo:$SHORT_SHA
+        ports:
+        - containerPort: 8080
+
