@@ -1,16 +1,18 @@
+# Step 1: Use a Python base image
+FROM python:3.8-slim
 
-# USE lightweight Python 3.7 image.
-# https://hub.docker.com/_/python
-FROM python:3.7-slim
+# Step 2: Set the working directory in the container
+WORKDIR /app
 
-# Copy local code to the container image.
-ENV APP_HOME /app
-WORKDIR $APP_HOME
-COPY . ./
+# Step 3: Copy the requirements.txt (if you have one) and install dependencies
+COPY requirements.txt /app/
+RUN pip install -r requirements.txt
 
-# Install production dependencies.
-RUN pip install Flask gunicorn
+# Step 4: Copy the application files into the container
+COPY . /app/
 
-# Run the web service on container startup. Here we use the gunicorn
-# webserver, with one worker process and 8 threads.
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 app:app
+# Step 5: Expose the container's port (to match the Kubernetes service)
+EXPOSE 8080
+
+# Step 6: Set the command to run the app
+CMD ["python", "app.py"]
